@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>mousetRajectory</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">mousetRajectory</h1>
+
+
+
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<p>Within the community of cognitive scientists, the analysis of
+movement data is becoming more and more popular. While continuous
+measurements promise insights that reaction times cannot provide,
+researchers conducting their first tracking experiment may feel
+overwhelmed by the novel data handling requirements. Consequently, they
+often resort to out-of-the-box software restricting their analysis
+choices or poorly documented code snippets from colleagues. Thus, time
+is spend learning peculiarities of certain software (or colleagues) that
+could also be invested in learning overarching principles of data
+analysis or the development of own analysis routines.</p>
+<p>The aim of <code>mousetRajectory</code> is to provide scientists with
+an easy-to-understand and modular introduction to the analysis of
+mouse-tracking and other 2D movement data. While
+<code>mousetRajectory</code> should provide most functions needed to
+analyze your first experiment, we strongly encourage you to extend
+and/or replace certain modules with own code; a deeper understanding of
+the analysis process will naturally lead to better interpretations of
+the results. Therefore, we tried to make the source code as easy to
+understand as possible even when this leads to slower function
+execution. We further recommend to inspect and understand the functions
+you are executing (if you are using RStudio on a Windows Machine, hit
+<code>F2</code> to inspect source code of functions).</p>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<p>You can install mousetRajectory from CRAN with</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;mousetRajectory&quot;</span>)</span></code></pre></div>
+<p>Alternatively, you can keep up to date and install the latest
+development version of mousetRajectory from <a href="https://github.com/mc-schaaf/mousetRajectory">github.com/mc-schaaf/mousetRajectory</a>
+with:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;devtools&quot;</span>)){<span class="fu">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)}</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;mc-schaaf/mousetRajectory&quot;</span>)</span></code></pre></div>
+</div>
+<div id="function-overview" class="section level2">
+<h2>Function Overview</h2>
+<p>Currently, the following functions are featured:</p>
+<ul>
+<li>Preprocessing:
+<ul>
+<li><code>is_monotonic()</code> checks whether your timestamps make
+sense and warns you if they don’t.</li>
+<li><code>is_monotonic_along_ideal()</code> checks whether your
+trajectories make sense and warns you if they don’t.</li>
+<li><code>time_circle_left()</code> tells you the time at which the
+starting area was left.</li>
+<li><code>time_circle_entered()</code> tells you the time at which the
+end area was entered.</li>
+<li><code>point_crosses()</code> tells you how often a certain value on
+the x or y axis is crossed.</li>
+<li><code>direction_changes()</code> tells you how often the direction
+along the x or y axis changes.<br />
+</li>
+<li><code>interp1()</code> directs you to the interpolation function
+from the awesome <code>signal</code> package. Thus, you do not have to
+call <code>library(&quot;signal&quot;)</code>. Such time-saving, much wow. Also,
+not having to attach the <code>signal</code> package avoids ambiguity
+between <code>signal::filter()</code> and <code>dplyr::filter()</code>
+in your search path.</li>
+<li><code>interp2()</code> is a convenience wrapper to
+<code>interp1()</code> that rescales the time for you.</li>
+</ul></li>
+<li>Spatial measures:
+<ul>
+<li><code>starting_angle()</code> computes (not only starting)
+angles.</li>
+<li><code>auc()</code> computes the (signed) Area Under the Curve
+(AUC).</li>
+<li><code>max_ad()</code> computes the (signed) Maximum Absolute
+Deviation (MAD).</li>
+<li><code>curvature()</code> computes the curvature.</li>
+<li><code>index_max_velocity()</code> computes the time to peak
+velocity, assuming equidistant times between data points.</li>
+<li><code>index_max_acceleration()</code> computes the time to peak
+acceleration, assuming equidistant times between data points.</li>
+</ul></li>
+<li>Other measures
+<ul>
+<li><code>sampen()</code> computes the sample entropy.</li>
+</ul></li>
+</ul>
+</div>
+<div id="a-simple-example" class="section level2">
+<h2>A Simple Example</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(mousetRajectory)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
+<p>Let us assume we are conducting a simple experiment. In our setup,
+participants must respond by moving a mouse cursor from a starting
+position (bottom circle, coordinates (0,0)) to one of two end positions
+(top circles, coordinates (-1,1) and (1,1)):</p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEGklEQVR4nO3d3XLTQBAGUen9XxoKqMSWV25F3pmdXbpvwHZF+uoQA1b+tt3eto0eUD2BIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBoGegzX73Dij8D2SCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCwoBOLuom1mdBDNDjqEFEvSaEAB0/FDBAqNuECKCXNflC/SYEADW2ZAt1nNAfqLkkV6jnhACg9r2JQifnKgJ09kaZQD0nCPSjg30OdPpUynuO9Z3QHejGI53rO0GgHx1NIHibhYBaL1QFejmRQO9PtO0CvTvRttcDOv9fWv7/g7b98Hy7dbTLt24d8MOD3Wt7+KUgUJUXq//+Mft0Qtqr+VvHutnxufXJhP5AzTdLvx7Uy8crinioy7d+cMzjG6Zfk379MEala9L7Yc6AS/YdJ8QA7V+vgkZ85PBw5s8mBAHtX68WPzrGvRN3nRAHNKrOq5cD6j16NaDumxcD6j95LaCAxUsBRQxeCShk70JAMXPXAQpauwxQ1NhVgMK2LgIUN3UNoMClSwBFDl0BKHTnAkCxM+cHCl45PVD0yNmBwjdODhQ/cW6ghIVTA2UMnBkoZd/EQDnz5gVKWjctUNa4WYHStk0KlDdtTqDEZVMCZQ6bESh114RAubPmA0peNR1Q9qjZgNI3TQaUP2kuoAGLpgIaMagy0PGTeIfsKQv0RfP9mzE7Lt9K7fk958+NQWtqAh0/O7759U05lQR6/eqBgd8q7vKtvJpf7eV70PdpGz7j3ocqArXvKbGmAlDjL6CT+1MqCHR2R4U5FYG2swdyKg+0nT2QVDmg8594Nuh7wl6+ldSbCdX2VBh09aG46gGdntWnGJy1whyB4KwCwVkrAJ2dtsSaGkDN8/pqHs5bY0wRoMaJvWD2dGIvuVKHbzE6csnlW7k9XIQe+MNd9rpAe4GfffN3xuVb/2kCQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkFvgWw7/4Q3ayUQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBD0CwxjP4tZ4eATAAAAAElFTkSuQmCC" /><!-- --></p>
+<p><code>dat</code> stores simple toy data that may reflect our pilot
+results. Let’s inspect the structure of the data:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">head</span>(dat)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 5</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt;   Trial Target  Time x_coord y_coord</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;  &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; 1     1 left       0    0     0     </span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; 2     1 left       1   -0.01  0.0140</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; 3     1 left       2   -0.02  0.0278</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; 4     1 left       3   -0.03  0.0416</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; 5     1 left       4   -0.04  0.0554</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; 6     1 left       5   -0.05  0.069</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co"># gg_background has been created previously and is a ggplot object</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>gg_background <span class="sc">+</span> <span class="fu">geom_path</span>(<span class="fu">aes</span>(x_coord, y_coord, <span class="at">group =</span> Trial), dat)</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAFMklEQVR4nO3d62LjJhQAYfT+L91uWscWERokwTm0mfmTVZwF9gu+yIm9ZbPTSvYCVk8gSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggaA9U7O/OgKZ/Q/4DCQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkETQNqPKkb2JgVzAH6XFQS0aglTAGqfxSQIDRsCTOAfqwmXmjcEiYAHawlWmjgEsYDHa4kVmjkEiYAHX82UKgx1yJArb8UCTRyCQJdGuw5UPOqFHcdG7uE4UA3Lhnc2CUIdGm0/wlQ6yxsOaDdAmOA9iynv/7UOWD30Y3x9ou9MdrVyb+mK7uj3eV3xuw+ujfee5HTgV5TlX+PDk437ozafXR3vHJ4yfD234nje/QVgI6Evj4193HQ5+jN58iWeKBYD/GNM9On87Z4EaCjMeY+87ofuznXvSXMPpvf33JOqX2zd/Z190d/OuLhIPN2UL19fn7ucFn943cf9Q95fDs9h6jyOV5C41N9E3QfXRiz/qbOux9rLXjp56S3+hxj3mPF9olNawnPphgG9L4rOT03etqJT7WEQXOMA9q27eN8epLQqU+1hDGTDAVqjDRl0IkPI2KAZgjh/pkwzUSg4UIx+ycMqDqbHDBeY+zhRQENForaP4FAQ/9No/fj2VTdR0OnGnjfO9cnEmjcHgr0iQWa8Oh/tk8o0Kg9NOVhZ8dkcDR+unvjB95Af03RfTRmuufXstD9Ew70fA/F7p8MoId7qBz8aWbhQA/3ULRPCtCDPRR8A/RjmhCgJ3vo+4vDfmEtBej2WUf4FSwL6O4eKj/+ML0koHsP9xJ80oDu7KGEK1gi0I1TztdXhb6uIQ/o8rWsVB9jSgS6uod+H9A1oRyfXKArPw1K8kkGunDu8FuBuoVKx9fMKB3o87djTibM8lkAqO/xX6EvmNUCQD1CaRtoCaAOobQNtAbQ+9bn9PW4GT6LANGJemleMr1VgM4f5wi0nQol+iwE1H7VQqbPSkDNO/OSsZbPyfuOItoLvX6JV6B6yi+R8mZK9FkN6CVUvX9Uns9yQP/cVFfPE2UKLQf0Z9o/LxD6XEWJfZ6+Wk3vUVy7V79vZav3VOxiuo/Cqt4e4PtmKWk13Udhle3zZdLv89i01XQeRfX9Cqpq5yRtoQWBXh/Kx4f05XQcRbW/8Yl9d5ST5fBRVO8dU8qVH5xNajmg6l04GpfEtR5QewX561lvQb0XzWs9oOasXsVg1hWWIxDMKhDMugJQa9olVrMG0OG8ns3DvGssZhGgg4l9wmw38Y+Zfcq16uTNkoJbFOjzPDX1pz7LAm3N9zyOXkb30S9NIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCDoFMjKgP/j7lclECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQ9Bf1TD6GduwhEQAAAABJRU5ErkJggg==" /><!-- --></p>
+<p>In this example, <code>Time</code> reflects the time passed since the
+onset of the imperative stimulus and always increases by 1 arbitrary
+unit. In a real experiment, a sensible first pre-processing step would
+be to double-check the order of your data via
+<code>is_monotonic()</code> applied to <code>Time</code>. Further, in a
+real experiment you would likely group by not only by <code>Time</code>,
+but also other variables like a subject or block identifier.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">group_by</span>(Trial) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    <span class="co"># will throw a warning if times are not monotonically increasing</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="at">is_ok =</span> <span class="fu">is_monotonic</span>(Time)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  )</span></code></pre></div>
+<p>As a next step, we will recode the coordinates so we can treat
+movements to the left and to the right in the same way. This enables us
+to restrict the trajectories to their relevant parts, i.e., after the
+home was left and before the target has been reached. This also allows
+us to extract our first dependent measures, <code>InitiationTime</code>
+and <code>MovementTime</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">group_by</span>(Trial) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="at">x_coord =</span> <span class="fu">ifelse</span>(Target <span class="sc">==</span> <span class="st">&quot;left&quot;</span>, <span class="sc">-</span>x_coord, x_coord),</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    <span class="at">InitiationTime =</span> <span class="fu">time_circle_left</span>(</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>      x_coord,</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>      y_coord,</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>      Time,</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>      <span class="at">x_mid =</span> <span class="dv">0</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>      <span class="at">y_mid =</span> <span class="dv">0</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>      <span class="at">radius =</span> <span class="fl">0.2</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>    ),</span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>    <span class="at">CompletionTime =</span> <span class="fu">time_circle_entered</span>(</span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>      x_coord,</span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>      y_coord,</span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>      Time,</span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>      <span class="at">x_mid =</span> <span class="dv">1</span>,</span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a>      <span class="at">y_mid =</span> <span class="dv">1</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>      <span class="at">radius =</span> <span class="fl">0.2</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a>    ), </span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a>    <span class="at">MovementTime =</span> CompletionTime <span class="sc">-</span> InitiationTime</span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a>  <span class="fu">filter</span>(Time <span class="sc">&gt;=</span> InitiationTime <span class="sc">&amp;</span> Time <span class="sc">&lt;</span> CompletionTime)</span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a>dat <span class="sc">%&gt;%</span></span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a>  <span class="fu">group_by</span>(Trial, InitiationTime, CompletionTime, MovementTime) <span class="sc">%&gt;%</span></span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a>  <span class="fu">count</span>()</span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 5</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a><span class="co">#&gt; # Groups:   Trial, InitiationTime, CompletionTime, MovementTime [4]</span></span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a><span class="co">#&gt;   Trial InitiationTime CompletionTime MovementTime     n</span></span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt;          &lt;int&gt;          &lt;int&gt;        &lt;int&gt; &lt;int&gt;</span></span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a><span class="co">#&gt; 1     1             12             84           72    72</span></span>
+<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a><span class="co">#&gt; 2     2             10             76           66    66</span></span>
+<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a><span class="co">#&gt; 3     3             10             79           69    69</span></span>
+<span id="cb6-35"><a href="#cb6-35" tabindex="-1"></a><span class="co">#&gt; 4     4              9             83           74    74</span></span>
+<span id="cb6-36"><a href="#cb6-36" tabindex="-1"></a></span>
+<span id="cb6-37"><a href="#cb6-37" tabindex="-1"></a>gg_background <span class="sc">+</span> <span class="fu">geom_path</span>(<span class="fu">aes</span>(x_coord, y_coord, <span class="at">group =</span> Trial), dat)</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEmElEQVR4nO3d4VbbOhAAYeX9X7oUAsS2lBFBu5LamR89dXKx9nzXdhJT2nKzp5XZA6yeQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQNARqNhbz4DC/4dskECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAUBhQ46ZuYmMmiAF6HGoS0agRQoDO3wqYIDRshAigyzT5QuNGCACqzJItNHCE8UDVSXKFRo4QAFR/NFGosdYiQK0vygQaOYJAP9rZ74Gap1LeOTZ2hOFALzwzuLEjCPSjvQkEX7M/0Nt1RqD2Eu+XYYFaC5SIEf4ZoO/X8LWB2u/SQoEe995+H/TSnru3XtrhL3fWu2bf3IsA5X9YPe67eY/1tRHSPs2/tK8XFmy/ji3yab7+ZXEH0PnwuX2+2l/+wxf3373Vv8vr16X53B9Z+o5iZZZAn8vWx1pL35O+ncYJvD5XTq/RI8QAfb+UhH7n8OJz/F7YkBGCgG63W/z3VZ/6jBohDii86+W58dy4VbYCuh4/jecGLrMT0NPjR6DDbOd3PkMvfJsCnY+fMJ9Ngc4el/Nt4FLdWytVjr8vpfHc4KW2ATr7tJ4bvdYuQE+PH4HOb3hCj58dgU4X6GCfHYEOvw2/b7AdUO7xszVQxvGzH9DRp/5M0IK0tUSHC1DKfctdgVKuP9cdrw70eIJFfr5o7nkboKzjZzOgR5+w+xutNXFrfg8nWNbxsyfQ6QIdO+ZGQF8+eefXbVegyqPRq/LW7Ob47ANU9Un4+Yb9gMr1sYx1eWty92GyfbYB+vJ5/DSWuHDH1tzK/ddyeiRp4Z6tqV1PsKzhtgKa4LMJ0KdP7aUsZemerZm9T9Lz0xhBS3dtzewIlDrXFkATfbYAOvik/y0X3Vvz+jsH/7Rc4OJ9W/l9/iHe8j1L/kjLApXvc6p8HUATJloUqBxvGs7zWRTofCUupfJg0ijdW4ldKZ7+OHxoKwLVDpVpf5negkB1i1lCKwL96OHo1gNqHSqTDqEFgX78RGgCQQJBywG1LzW+UaRFF5hHIFh0BSBPMciLNCQQJBDlZzHIT/NUHSh7iuq6iwB5wwyq3nKd1JJAZ5B5PMsCHf+s3dRBureym/9v33yM0b31nyYQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkECQQJBAkEPQUyErnv6tk9wSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIL+AJgKPuJND8QmAAAAAElFTkSuQmCC" /><!-- --></p>
+<p>Note that filtering the data to the relevant part leads to an unequal
+amount of data points for each trajectory (column <code>n</code>). This
+is bad news when you want to display average trajectories! One solution
+for this problem is “time-normalization,” i.e., a separate linear
+interpolation of the x and y coordinates at certain time points. It has
+been proposed that this process should be done prior to the computation
+of MAD, AUC, etc. So let’s do this via <code>interp2()</code>, a
+convenient wrapper to <code>signal::interp1()</code>:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>dat_int <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">group_by</span>(Trial) <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">reframe</span>(</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">Time_new =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">100</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="at">x_new =</span> <span class="fu">interp2</span>(Time, x_coord, <span class="dv">101</span>),</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>    <span class="at">y_new =</span> <span class="fu">interp2</span>(Time, y_coord, <span class="dv">101</span>),</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  )</span></code></pre></div>
+<p>Now we are ready to compute dependent measures like AUC and MAD:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>dat_int <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">group_by</span>(Trial) <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>    <span class="at">MAD =</span> <span class="fu">max_ad</span>(x_new, y_new),</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    <span class="at">AUC =</span> <span class="fu">auc</span>(x_new, y_new),</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    <span class="at">CUR =</span> <span class="fu">curvature</span>(x_new, y_new)</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  )</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 4</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt;   Trial     MAD     AUC   CUR</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#&gt; 1     1  0.0353  0.0239  1.00</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co">#&gt; 2     2 -0.0274 -0.0183  1.00</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt; 3     3  0.0462  0.0314  1.01</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt; 4     4  0.126   0.0907  1.04</span></span></code></pre></div>
+<p>As a last step, you may want to plot your average trajectory:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>dat_avg <span class="ot">&lt;-</span> dat_int <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">group_by</span>(Time_new) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    <span class="at">x_avg =</span> <span class="fu">mean</span>(x_new),</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    <span class="at">y_avg =</span> <span class="fu">mean</span>(y_new)</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  )</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>gg_background <span class="sc">+</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="fu">aes</span>(x_avg, y_avg), dat_avg) <span class="sc">+</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>  <span class="fu">geom_path</span>(<span class="fu">aes</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>)), <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="co"># ideal trajectory</span></span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAABlBMVEUAAAD///+l2Z/dAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAEI0lEQVR4nO3d63LaMBBAYfv9X7q3aQpY4ggirXbpOT8ydRisna8JYJskx2lPO3YPkD2BIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBoHugw372DGj5f0iBBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSClgF1TuoGNmeCNUC3Q20imjXCEqDHSwEbhKaNsALoMk280LwRFgA1ZokWmjjCfKDmJLFCM0dYANT+bKBQZ60kQL07RQLNHEGgl3b2faDut1Lc99jcEaYDvXHL5OaOINBLexMI7iMQ3EcguI9AcJ8PA7ocsX5rb7T11g5vPh//OmiGzye/kr6smAQo78FqDqDe0fxb+3pvgNxH8+27RT4CHZ3zQW/ub3hrfJfzTue9u3jqM4qNWcKfwa7fZZnOSZ8P48Q/wR8TR1gDdH5drou8cni/0qQRFgGd5xl+XfW61owR1gFFt2jajwG6ffyZut/hrdz1jr+m7Zi3Mtc9Pp2w6+GtxK18KvgEoKVPlR8AtPalRH2ghY8/170WBFrsUx5otU99oNgFygGtH7E2UMCEpYFWP/5c910LKMKnMlCIT2GgoOnKAkUNVxUo7kT38FaqYh5/ritUAYrzqQ0UMWBJoMjBKgKFzlUQKHasekB/LyhHLTe8laVYn3pAwT7lgMJnKgYUP1ItoA0/YF4M6OtD7JJDWwna4FMKaIdPJaBNvwNkeGt7e8apA7RpmjJAx7lnoMxAt2/i3eWTF+gfza9/bPPJCnT39u+dv+crKdAjiED3tX6oYMccv1ce3oqr+dNe24YZ3gqr5bPvaygjUPszKabJANT7Utn0JZQQ6OUbliYQlB7o6N0QVDqg/l8883wQjZBtngwDjd60rnxA/QdpgZ6vmmEcgWBVgWDVDEC9ZVNMkwOoua5H87BujmGSADUW9oTZ3cKecqUefxXQrjnSAt2ehN550Scv0Jngb9/8GWN46z9NIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCDoKZAd/Te8WSuBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIEggSCBIIGgH6DhP3WR4cwQAAAAAElFTkSuQmCC" /><!-- --></p>
+<p>Congratulations, you worked trough your first mouse-tracking
+analysis!</p>
+<p>As a final note: This package is currently under development. If you
+spot any bugs or have other improvement suggestions, please let us know
+by filing an issue at <a href="https://github.com/mc-schaaf/mousetRajectory/issues">github.com/mc-schaaf/mousetRajectory/issues</a>.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

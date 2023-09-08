@@ -1,0 +1,80 @@
+
+<!-- README.md is generated from README.Rmd. EDIT THAT FILE!!! -->
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/mc-schaaf/mousetRajectory/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mc-schaaf/mousetRajectory/actions/workflows/R-CMD-check.yaml)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+<!-- badges: end -->
+
+# mousetRajectory: Trajectory Analyses for Behavioural Scientists
+
+Tool helping psychologists and other behavioural scientists to analyze
+mouse movement (and other 2-D trajectory) data. Bundles together several
+functions computing spatial measures (maximum absolute deviation, area
+under the curve, sample entropy) or providing a shorthand for often-used
+procedures.
+
+## Installation
+
+You can install mousetRajectory from CRAN with
+
+``` r
+install.packages("mousetRajectory")
+```
+
+Alternatively, you can keep up to date and install the latest
+development version of mousetRajectory from
+[github.com/mc-schaaf/mousetRajectory](https://github.com/mc-schaaf/mousetRajectory)
+with:
+
+``` r
+if(!require("devtools")){install.packages("devtools")}
+devtools::install_github("mc-schaaf/mousetRajectory")
+```
+
+## Function Overview
+
+Currently, the following functions are featured:
+
+- Preprocessing:
+  - `is_monotonic()` checks whether your timestamps make sense and warns
+    you if they don’t.
+  - `is_monotonic_along_ideal()` checks whether your trajectories make
+    sense and warns you if they don’t.
+  - `time_circle_left()` tells you the time at which the starting area
+    was left.
+  - `time_circle_entered()` tells you the time at which the end area was
+    entered.
+  - `point_crosses()` tells you how often a certain value on the x or y
+    axis is crossed.
+  - `direction_changes()` tells you how often the direction along the x
+    or y axis changes.  
+  - `interp1()` directs you to the interpolation function from the
+    awesome `signal` package. Thus, you do not have to call
+    `library("signal")`. Such time-saving, much wow. Also, not having to
+    attach the `signal` package avoids ambiguity between
+    `signal::filter()` and `dplyr::filter()` in your search path.
+  - `interp2()` is a convenience wrapper to `interp1()` that rescales
+    the time for you.
+- Spatial measures:
+  - `starting_angle()` computes (not only starting) angles.
+  - `auc()` computes the (signed) Area Under the Curve (AUC).
+  - `max_ad()` computes the (signed) Maximum Absolute Deviation (MAD).
+  - `curvature()` computes the curvature.
+  - `index_max_velocity()` computes the time to peak velocity, assuming
+    equidistant times between data points.
+  - `index_max_acceleration()` computes the time to peak acceleration,
+    assuming equidistant times between data points.
+- Other measures
+  - `sampen()` computes the sample entropy.
+
+## Documentation
+
+You can find an example application as well as the full documentation at
+[mc-schaaf.github.io/mousetRajectory/](https://mc-schaaf.github.io/mousetRajectory/articles/mousetRajectory.html).
+
+## Bug Reports
+
+Please report bugs to
+[github.com/mc-schaaf/mousetRajectory/issues](https://github.com/mc-schaaf/mousetRajectory/issues).
